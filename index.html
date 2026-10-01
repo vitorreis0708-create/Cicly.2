@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Ciclo de Estudos</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#14213D">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' fill='%2314213D'/%3E%3Ccircle cx='256' cy='256' r='120' fill='none' stroke='%232A9D8F' stroke-width='52'/%3E%3C/svg%3E">
+<style>
+:root{--bg:#EDF1F5;--card:#fff;--ink:#14213D;--mut:#5B6B80;--acc:#1F5FA8;--line:#D5DDE6;--ok:#2A9D8F}
+@media(prefers-color-scheme:dark){:root:not([data-t=light]){--bg:#0F1722;--card:#18222F;--ink:#E8EEF5;--mut:#93A3B8;--acc:#6AA9F0;--line:#26323F}}
+:root[data-t=dark]{--bg:#0F1722;--card:#18222F;--ink:#E8EEF5;--mut:#93A3B8;--acc:#6AA9F0;--line:#26323F}
+*{box-sizing:border-box;margin:0}
+html,body{height:100%}
+body{background:var(--bg);color:var(--ink);font:16px/1.4 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;display:flex;flex-direction:column;padding-top:env(safe-area-inset-top)}
+header{display:flex;justify-content:space-between;align-items:center;padding:14px 18px 6px}
+header h1{font-size:20px;letter-spacing:-.01em}
+.ib{background:none;border:0;color:var(--ink);font-size:22px;padding:6px 8px;border-radius:8px}
+main{flex:1;overflow:auto;padding:8px 18px 24px}
+nav{display:flex;background:var(--card);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom)}
+nav button{flex:1;background:none;border:0;color:var(--mut);padding:10px 0 9px;font:inherit;font-size:12px}
+nav button span{display:block;font-size:20px}
+nav button.on{color:var(--acc);font-weight:600}
+h2{font-size:26px;letter-spacing:-.02em}
+h3{font-size:15px;margin:22px 0 8px}
+.mut,small{color:var(--mut);font-size:14px}
+.seg{display:flex;gap:2px;margin:10px 0 16px}
+.seg i{flex:1;height:16px;border-radius:3px}
+.seg i.c{outline:2px solid var(--ink);outline-offset:1px}
+.now{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px}
+.tm{font-size:28px;font-variant-numeric:tabular-nums;margin:10px 0 14px;color:var(--mut)}
+.row{display:flex;gap:10px}
+.btn{flex:1;background:var(--acc);color:#fff;border:0;border-radius:10px;padding:13px;font:inherit;font-weight:600}
+.btn.ghost{background:none;color:var(--acc);border:1px solid var(--line)}
+.btn.bad{background:none;color:#C0392B;border:1px solid var(--line)}
+.list{list-style:none;padding:0}
+.list li{display:flex;align-items:center;gap:10px;padding:10px 4px;border-bottom:1px solid var(--line)}
+.list li b{width:10px;height:10px;border-radius:50%;flex:none}
+.list li span{margin-left:auto;color:var(--ok);font-weight:700}
+.list li.ok{color:var(--mut);text-decoration:line-through}
+.list li.cur{font-weight:700}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:13px 14px;margin-bottom:10px;display:block;width:100%;text-align:left;color:inherit;font:inherit}
+.card.p{opacity:.55}
+.chips{display:flex;gap:6px;margin-top:6px;flex-wrap:wrap}
+.chips em{font-style:normal;font-size:12px;background:var(--bg);border-radius:6px;padding:2px 8px;color:var(--mut)}
+.bar{height:10px;border-radius:5px;margin-top:8px}
+.top{display:flex;justify-content:space-between;gap:8px}
+.empty{text-align:center;padding:50px 10px}
+.empty p{margin:10px 0 20px;color:var(--mut)}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.stats div{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px}
+.stats b{display:block;font-size:24px}
+dialog{border:0;border-radius:16px;padding:20px;width:min(92vw,420px);background:var(--card);color:var(--ink);max-height:90vh}
+dialog::backdrop{background:rgba(0,0,0,.5)}
+label{display:block;font-weight:600;margin:14px 0 6px;font-size:14px}
+input[type=text],input[type=number],select{width:100%;padding:11px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font:inherit}
+.rate{display:flex;gap:6px}
+.rate button{flex:1;padding:10px 0;border-radius:8px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font:inherit}
+.rate button.on{background:var(--acc);color:#fff;border-color:var(--acc)}
+.acts{display:flex;flex-direction:column;gap:8px;margin-top:18px}
+#toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:10px;font-size:14px;opacity:0;pointer-events:none;transition:opacity .2s}
+#toast.on{opacity:1}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+</style>
+</head>
+<body>
+<header><h1>Ciclo de Estudos</h1><button class="ib" data-a="settings" aria-label="Configurações">⚙️</button></header>
+<main id="v"></main>
+<nav id="nav"></nav>
+<dialog id="dlg"></dialog>
+<div id="toast"></div>
+<script>
+const K='ciclo-estudos-v1',$=s=>document.querySelector(s);
+let S=JSON.parse(localStorage.getItem(K)||'null')||{subs:[],size:20,cycle:{items:[],ds:[],cur:null,start:null},mode:'spread',log:[],cycles:0,seq:0,theme:'auto'};
+let tab='home',E=null;
+const save=()=>localStorage.setItem(K,JSON.stringify(S));
+if(!S.cycle.ds){S.cycle.ds=S.cycle.items.map((_,i)=>i<(S.cycle.done||0));S.cycle.cur=null}
+if(!S.mode)S.mode='spread';
+const cnt=()=>S.cycle.ds.filter(Boolean).length;
+const curIdx=()=>{const c=S.cycle;return(c.cur!=null&&!c.ds[c.cur])?c.cur:c.ds.indexOf(false)};
+const esc=t=>String(t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const sub=id=>S.subs.find(s=>s.id===id);
+const nm=id=>sub(id)?esc(sub(id).name):'(removida)';
+const col=id=>`hsl(${(id*67+190)%360} 55% 48%)`;
+const need=s=>(s.d+s.c)*s.p;
+const toast=t=>{const e=$('#toast');e.textContent=t;e.classList.add('on');setTimeout(()=>e.classList.remove('on'),2000)};
+const fmt=s=>{const h=Math.floor(s/3600),m=Math.floor(s%3600/60);return h?`${h}h ${String(m).padStart(2,'0')}min`:`${m}min`};
+
+// ---- Cálculo: necessidade -> frequência (soma exata = tamanho do ciclo)
+function freqs(){
+  const a=S.subs.filter(s=>!s.paused),N=S.size;
+  if(!a.length)return[];
+  const tot=a.reduce((x,s)=>x+need(s),0);
+  const r=a.map(s=>({s,raw:need(s)/tot*N}));
+  r.forEach(o=>o.f=Math.floor(o.raw));
+  if(N>=a.length)r.forEach(o=>{if(o.f<1)o.f=1});
+  let diff=N-r.reduce((x,o)=>x+o.f,0);
+  while(diff!==0){
+    if(diff>0){r.sort((x,y)=>(y.raw-y.f)-(x.raw-x.f));r[0].f++;diff--}
+    else{const c=r.filter(o=>o.f>1);if(!c.length)break;c.sort((x,y)=>(x.raw-x.f)-(y.raw-y.f));c[0].f--;diff++}
+  }
+  return r;
+}
+// ---- Distribuição: espalha as repetições ao longo do ciclo
+function build(){
+  let ids=[];
+  if(S.mode==='block'){
+    freqs().sort((a,b)=>b.f-a.f||b.raw-a.raw).forEach(o=>{for(let k=0;k<o.f;k++)ids.push(o.s.id)});
+  }else{
+    const it=[];
+    freqs().forEach(o=>{for(let k=0;k<o.f;k++)it.push({id:o.s.id,pos:(k+.5)/o.f*S.size,f:o.f})});
+    it.sort((a,b)=>a.pos-b.pos||b.f-a.f);
+    ids=it.map(x=>x.id);
+    for(let i=1;i<ids.length;i++){
+      if(ids[i]===ids[i-1]){let j=i+1;while(j<ids.length&&ids[j]===ids[i-1])j++;if(j<ids.length)[ids[i],ids[j]]=[ids[j],ids[i]]}
+    }
+  }
+  S.cycle={items:ids,ds:ids.map(()=>false),cur:null,start:null};save();
+}
+function streak(){
+  const d=new Set(S.log.map(l=>new Date(l.t).toDateString()));let n=0,x=new Date();
+  if(!d.has(x.toDateString()))x.setDate(x.getDate()-1);
+  while(d.has(x.toDateString())){n++;x.setDate(x.getDate()-1)}return n;
+}
+// ---- Telas
+function home(){
+  const c=S.cycle;
+  if(!c.items.length)return`<div class="empty"><h2>Nenhum ciclo ainda</h2><p>Cadastre suas matérias e o app monta o ciclo para você.</p><button class="btn" data-a="goSubs">Adicionar matéria</button></div>`;
+  const ci=curIdx();
+  return`<p class="mut">Ciclo ${S.cycles+1} · ${cnt()} de ${c.items.length} estudos</p>
+  <div class="seg">${c.items.map((id,i)=>`<i class="${i===ci?'c':''}" style="background:${col(id)};opacity:${c.ds[i]?1:.3}"></i>`).join('')}</div>
+  <div class="now"><small>Estudando agora</small><h2>${nm(c.items[ci])}</h2>
+  <div id="tm" class="tm">${c.start?'':'Cronômetro opcional'}</div>
+  <div class="row">${c.start?'<button class="btn ghost" data-a="reset">Zerar</button>':'<button class="btn ghost" data-a="start">Iniciar cronômetro</button>'}<button class="btn" data-a="done">Concluir estudo</button></div></div>
+  <h3>Sequência do ciclo</h3><p class="mut" style="margin-bottom:6px">Toque em um estudo para escolher o que estudar agora.</p>
+  <ol class="list">${c.items.map((id,i)=>`<li class="${c.ds[i]?'ok':i===ci?'cur':''}" ${c.ds[i]?'':`data-a="pick" data-i="${i}" style="cursor:pointer"`}><b style="background:${col(id)}"></b>${nm(id)}<span>${c.ds[i]?'✓':i===ci?'◀ agora':''}</span></li>`).join('')}</ol>`;
+}
+function subs(){
+  return`<button class="btn" data-a="add" style="width:100%;margin:8px 0 14px">＋ Adicionar matéria</button>`+
+  (S.subs.length?S.subs.map(s=>`<button class="card ${s.paused?'p':''}" data-a="edit" data-id="${s.id}"><div class="top"><b>${esc(s.name)}</b><small>${s.paused?'Pausada':''}</small></div><div class="chips"><em>Dificuldade ${s.d}</em><em>Peso ${s.p}</em><em>Conteúdo ${s.c}</em></div></button>`).join(''):'<p class="mut">Nenhuma matéria cadastrada.</p>');
+}
+function dist(){
+  const r=freqs();
+  if(!r.length)return'<div class="empty"><h2>Sem distribuição</h2><p>Cadastre ao menos uma matéria ativa.</p></div>';
+  r.sort((a,b)=>b.f-a.f||b.raw-a.raw);
+  const mx=Math.max(...r.map(o=>need(o.s))),top=r[0].f||1;
+  return`<p class="mut" style="margin:8px 0 12px">Ciclo de ${S.size} estudos. Necessidade = (dificuldade + conteúdo) × peso.</p>
+  <div class="rate"><button data-a="mode" data-m="spread" class="${S.mode==='spread'?'on':''}">Espalhada</button><button data-a="mode" data-m="block" class="${S.mode==='block'?'on':''}">Em blocos</button></div>
+  <p class="mut" style="margin:6px 0 14px">${S.mode==='block'?'Cada matéria aparece em sequência, com todas as repetições juntas.':'As repetições de cada matéria ficam espalhadas pelo ciclo.'}</p>`+
+  r.map(o=>{const q=need(o.s)/mx,l=q>=.66?'Alta':q>=.33?'Média':'Baixa';
+    return`<div class="card"><div class="top"><b>${esc(o.s.name)}</b><b>${o.f}×</b></div><small>Necessidade ${l} · ${need(o.s)} pts (${o.raw.toFixed(2).replace('.',',')} no cálculo)</small><div class="bar" style="width:${o.f/top*100}%;background:${col(o.s.id)}"></div></div>`}).join('')+
+  `<button class="btn" data-a="gen" style="width:100%;margin-top:6px">Gerar novo ciclo</button>`;
+}
+function prog(){
+  const secs=S.log.reduce((x,l)=>x+(l.secs||0),0),by={};
+  S.log.forEach(l=>by[l.sid]=(by[l.sid]||0)+1);
+  const rows=Object.entries(by).sort((a,b)=>b[1]-a[1]),mx=rows.length?rows[0][1]:1;
+  return`<div class="stats" style="margin-top:8px"><div><b>${S.cycles}</b><small>ciclos completos</small></div><div><b>${S.log.length}</b><small>estudos concluídos</small></div><div><b>${fmt(secs)}</b><small>tempo cronometrado</small></div><div><b>${streak()}</b><small>dias seguidos</small></div></div>
+  <h3>Por matéria</h3>`+(rows.length?rows.map(([id,n])=>`<div class="card"><div class="top"><b>${nm(+id)}</b><span>${n}</span></div><div class="bar" style="width:${n/mx*100}%;background:${col(+id)}"></div></div>`).join(''):'<p class="mut">Conclua seu primeiro estudo para ver o histórico.</p>');
+}
+const tabs=[['home','🏠','Início',home],['subs','📚','Matérias',subs],['dist','📊','Distribuição',dist],['prog','📈','Progresso',prog]];
+function render(){
+  $('#nav').innerHTML=tabs.map(t=>`<button class="${tab===t[0]?'on':''}" data-a="tab" data-t="${t[0]}"><span>${t[1]}</span>${t[2]}</button>`).join('');
+  $('#v').innerHTML=tabs.find(t=>t[0]===tab)[3]();tick();
+}
+function tick(){const e=$('#tm');if(e&&S.cycle.start){const s=Math.floor((Date.now()-S.cycle.start)/1000);e.textContent=[Math.floor(s/3600),Math.floor(s%3600/60),s%60].map(n=>String(n).padStart(2,'0')).join(':')}}
+setInterval(tick,1000);
+// ---- Editor de matéria
+const hint={d:['muito fácil','muito difícil'],p:['pouco importante','muito importante'],c:['pouco conteúdo','enorme quantidade']};
+function editor(){
+  const rate=(k,t)=>`<label>${t} <small>(1 ${hint[k][0]} · 5 ${hint[k][1]})</small></label><div class="rate">${[1,2,3,4,5].map(n=>`<button type="button" data-a="rate" data-k="${k}" data-n="${n}" class="${E[k]===n?'on':''}">${n}</button>`).join('')}</div>`;
+  $('#dlg').innerHTML=`<h2 style="font-size:20px">${E.id?'Editar matéria':'Nova matéria'}</h2><label>Nome da matéria</label><input type="text" id="nm" value="${esc(E.name)}" maxlength="40">${rate('d','Dificuldade')}${rate('p','Peso')}${rate('c','Quantidade de conteúdo')}
+  <div class="acts"><button class="btn" data-a="save">Salvar</button>${E.id?`<button class="btn ghost" data-a="pause">${sub(E.id).paused?'Reativar matéria':'Pausar matéria'}</button><button class="btn bad" data-a="del">Excluir</button>`:''}<button class="btn ghost" data-a="close">Cancelar</button></div>`;
+  if(!$('#dlg').open)$('#dlg').showModal();
+}
+function settings(){
+  $('#dlg').innerHTML=`<h2 style="font-size:20px">Configurações</h2><label>Tamanho do ciclo (estudos)</label><div class="rate">${[10,20,30].map(n=>`<button type="button" data-a="size" data-n="${n}" class="${S.size===n?'on':''}">${n}</button>`).join('')}</div><input type="number" id="sz" min="1" max="100" value="${S.size}" style="margin-top:8px" placeholder="Personalizado">
+  <label>Tema</label><select id="th"><option value="auto">Automático</option><option value="light">Claro</option><option value="dark">Escuro</option></select>
+  <div class="acts"><button class="btn" data-a="applyset">Salvar e gerar novo ciclo</button><button class="btn ghost" data-a="restart">Reiniciar ciclo atual</button><button class="btn ghost" data-a="export">Exportar dados</button><button class="btn ghost" data-a="import">Importar dados</button><button class="btn ghost" data-a="close">Fechar</button></div><input type="file" id="fi" accept=".json" hidden>`;
+  $('#th').value=S.theme||'auto';$('#dlg').showModal();
+  $('#fi').onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const d=JSON.parse(r.result);if(!Array.isArray(d.subs))throw 0;S=d;save();theme();$('#dlg').close();render();toast('Dados importados')}catch{toast('Arquivo inválido')}};r.readAsText(f)};
+}
+function theme(){const t=S.theme||'auto';if(t==='auto')document.documentElement.removeAttribute('data-t');else document.documentElement.dataset.t=t}
+// ---- Ações
+document.addEventListener('click',e=>{
+  const b=e.target.closest('[data-a]');if(!b)return;const a=b.dataset.a,c=S.cycle;
+  if(a==='tab'){tab=b.dataset.t;render()}
+  else if(a==='goSubs'){tab='subs';render()}
+  else if(a==='settings')settings();
+  else if(a==='close')$('#dlg').close();
+  else if(a==='start'){c.start=Date.now();save();render()}
+  else if(a==='reset'){c.start=null;save();render()}
+  else if(a==='done'){
+    const i=curIdx();
+    S.log.push({sid:c.items[i],t:Date.now(),secs:c.start?Math.floor((Date.now()-c.start)/1000):0});
+    c.ds[i]=true;c.cur=null;c.start=null;
+    if(cnt()>=c.items.length){S.cycles++;build();toast('Ciclo concluído! Novo ciclo gerado.')}
+    save();render();
+  }
+  else if(a==='pick'){c.cur=+b.dataset.i;c.start=null;save();render();window.scrollTo(0,0);$('#v').scrollTop=0}
+  else if(a==='mode'){S.mode=b.dataset.m;build();render();toast('Ciclo gerado de novo')}
+  else if(a==='add'){E={name:'',d:3,p:3,c:3};editor()}
+  else if(a==='edit'){const s=sub(+b.dataset.id);E={...s};editor()}
+  else if(a==='rate'){E.name=$('#nm').value;E[b.dataset.k]=+b.dataset.n;editor()}
+  else if(a==='save'){
+    const n=$('#nm').value.trim();if(!n){toast('Digite o nome da matéria');return}
+    if(E.id){Object.assign(sub(E.id),{name:n,d:E.d,p:E.p,c:E.c})}
+    else S.subs.push({id:++S.seq,name:n,d:E.d,p:E.p,c:E.c,paused:false});
+    if(!S.cycle.items.length)build();
+    save();$('#dlg').close();render();toast('Salvo. Vale a partir do próximo ciclo.');
+  }
+  else if(a==='pause'){const s=sub(E.id);s.paused=!s.paused;save();$('#dlg').close();render()}
+  else if(a==='del'){if(confirm('Excluir esta matéria?')){S.subs=S.subs.filter(s=>s.id!==E.id);save();$('#dlg').close();render()}}
+  else if(a==='gen'){build();tab='home';render();toast('Novo ciclo gerado')}
+  else if(a==='size'){$('#sz').value=b.dataset.n;document.querySelectorAll('[data-a=size]').forEach(x=>x.classList.toggle('on',x===b))}
+  else if(a==='applyset'){S.size=Math.max(1,Math.min(100,+$('#sz').value||20));S.theme=$('#th').value;theme();build();$('#dlg').close();tab='home';render();toast('Novo ciclo gerado')}
+  else if(a==='restart'){c.ds=c.items.map(()=>false);c.cur=null;c.start=null;save();$('#dlg').close();render()}
+  else if(a==='export'){const l=document.createElement('a');l.href=URL.createObjectURL(new Blob([JSON.stringify(S)],{type:'application/json'}));l.download='ciclo-estudos-backup.json';l.click()}
+  else if(a==='import')$('#fi').click();
+});
+theme();render();
+if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
+</script>
+</body>
+</html>
